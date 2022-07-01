@@ -8,13 +8,13 @@ const ReactionSchema = new Schema(
             default: () => new Types.ObjectId()
         },
         reactionBody: {
-            type: String
-            // required
-            // 280 character minimum
+            type: String,
+            required: true,
+            minLength: 280
         },
         username: {
-            type: String
-            // required
+            type: String,
+            required: true
         },
         createdAt: {
             type: Date,
@@ -27,27 +27,29 @@ const ReactionSchema = new Schema(
 const ThoughtSchema = new Schema(
     {
         thoughtText: {
-            type: String
-            // required
-            // must be between 1 and 280 characters
+            type: String,
+            required: true,
+            minLength: 1,
+            maxLength: 280
         },
 
         createdAt: {
             type: Date,
-            default: Date.now
-            // use a getter method to format the timestamp on query
+            default: Date.now,
+            get: createdAtVal => dateFormat(createdAtVal)
         },
         // username (the user that created this thought)
 
         username: {
-            type: String
-            // required
+            type: String,
+            required: true
         },
         reactions: [ReactionSchema]
     },
     {
         toJSON: {
-            virtuals: true
+            virtuals: true,
+            getters: true
         },
         id: false
     }
