@@ -1,24 +1,38 @@
 const router = require('express').Router();
 
-// GET all users
-router.get('/', (req, res) => {
-    res.send('GET all users route');
-    console.log('GET all users route');
-});
+const {
+    getAllUsers,
+    getUserById,
+    createUser,
+    updateUser,
+    deleteUser
+} = require('../../controllers/user-controller');
 
-// GET a single user
+router
+    .route('/')
+    .get(getAllUsers)
+    .post(createUser);
 
-// POST a new user
 
-// PUT to update a user by its _id
+router
+    .route('/:id')
+    .get(getUserById)
+    .put(updateUser)
+    .delete(deleteUser);
 
-// DELETE to remove user by its _id
+router
+    .router('/:userId/friends/:friendId')
+    .post()
+    .delete();
 
 // BONUS: Remove a user's associated thoughts when deleted
 
-
+// router
+//     .route('/:userId/friends/:friendId')
+    // .post()
+    // .delete();
 // /api/users/:userId/friends/:friendId
-    // POST to add a enw friend to user's friend list
+    // POST to add a new friend to user's friend list
     // DELETE to remove a friend from a user's friend list
 
 module.exports = router;
