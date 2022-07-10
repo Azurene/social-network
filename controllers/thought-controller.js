@@ -14,7 +14,13 @@ const thoughtController = {
     // get thought by id
     getThoughtById({ params }, res) {
         Thought.findOne({ _id: params.id })
-            .then(dbUserData => res.json(dbUserData))
+            .then(dbThoughtData => {
+                if (!dbThoughtData) {
+                    res.status(404).json({ message: 'No thought with this id!' });
+                    return;
+                }
+                res.json(dbThoughtData);
+            })
             .catch(err => {
                 console.log(err);
                 res.sendStatus(400);
@@ -56,23 +62,18 @@ const thoughtController = {
 
     // DELETE to remove a thought by its _id
     deleteThought({ params }, res) {
-        Thought.findOneAndDelete({ _id: params.thoughtId })
-            .then(deletedThought => {
-                if (!deletedThought) {
-                    return res.status(404).json({ message: 'No thought with this id! '});
-                }
-                return User.findOneAndUpdate(
-                    // { _id: params.thoughtId },
-                    { $pull: { thoughts: params.thoughtId } },
-                    { new: true }
-                );
-            })
+        Thought.findOneAndDelete({ _id: params.id })
             .then(dbThoughtData => {
                 if (!dbThoughtData) {
-                    res.status(404).json({ message: 'No thought found with this id!' });
+                    res.status(404).json({ message: 'No thought with this id!'});
                     return;
                 }
                 res.json(dbThoughtData);
+                return User.findOneAndUpdate(
+                    { _id: params.thoughtId },
+                    { $pull: { thoughts: params.thoughtId } },
+                    { new: true }
+                );
             })
             .catch(err => res.json(err));
     }
